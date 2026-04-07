@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affiliate Dashboard — AffiliateTracker Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="top-bar">
+            <a href="index.html" class="top-bar__brand">
+                <img src="assets/img/logo.png" alt="Logo" style="height: 32px; width: 32px; border-radius: 5px;">
+                AffiliateTracker
+            </a>
+            <nav class="top-bar__nav">
+                <a href="affiliate-dashboard.html" class="top-bar__link top-bar__link--active">Dashboard</a>
+                <a href="affiliate-profile.html" class="top-bar__link">Profile</a>
+            </nav>
+            <div class="top-bar__actions">
+                <div class="top-bar__user">
+                    <div class="top-bar__avatar">J</div>
+                    <span>Jane Cooper</span>
+                </div>
+                <a href="affiliate-login.html" class="btn btn--secondary btn--sm">Logout</a>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="page-header animate-in">
+                <h1 class="page-header__title">Welcome back, Jane</h1>
+                <p class="page-header__subtitle">Your referral code: <strong class="mono" style="color:var(--accent-blue);">JANE2024X</strong> — Tier: <span class="badge badge--gold">Gold</span></p>
+            </div>
+
+            <div class="stat-grid animate-in">
+                <div class="stat-card">
+                    <div class="stat-card__label">Total Clicks</div>
+                    <div class="stat-card__value">3,842</div>
+                    <div class="stat-card__trend stat-card__trend--up">2,156 unique</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card__label">Conversions</div>
+                    <div class="stat-card__value">247</div>
+                    <div class="stat-card__trend stat-card__trend--up">189 approved</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card__label">Total Earned</div>
+                    <div class="stat-card__value">$18,450.00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card__label">Available Balance</div>
+                    <div class="stat-card__value" style="color:var(--accent-green);">$4,230.50</div>
+                    <div class="stat-card__trend stat-card__trend--up">$14,219.50 paid</div>
+                </div>
+            </div>
+
+            <div class="grid-2 animate-in">
+                <div class="panel">
+                    <div class="panel__header"><h2 class="panel__title">Click Activity (30 Days)</h2></div>
+                    <div class="panel__body"><div class="chart-container"><canvas id="clicksChart"></canvas></div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel__header"><h2 class="panel__title">Conversions (30 Days)</h2></div>
+                    <div class="panel__body"><div class="chart-container"><canvas id="conversionsChart"></canvas></div></div>
+                </div>
+            </div>
+
+            <div class="panel animate-in">
+                <div class="panel__header"><h2 class="panel__title">Recent Conversions</h2></div>
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Order ID</th><th>Revenue</th><th>Commission</th><th>Tier</th><th>Status</th><th>Date</th></tr>
+                    </thead>
+                    <tbody id="conversionTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="panel animate-in">
+                <div class="panel__header"><h2 class="panel__title">Recent Clicks</h2></div>
+                <table class="data-table">
+                    <thead>
+                        <tr><th>IP Address</th><th>Referrer</th><th>Landing Page</th><th>Unique</th><th>Date</th></tr>
+                    </thead>
+                    <tbody id="clickTableBody"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="assets/js/demo.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var chartOpts = DemoApp.chartDefaults();
+
+            new Chart(document.getElementById('clicksChart'), {
+                type: 'line',
+                data: {
+                    labels: DemoApp.generateDateLabels(30),
+                    datasets: [{
+                        data: DemoApp.generateRandomSeries(30, 80, 200),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                        fill: true, tension: 0.35, pointRadius: 3,
+                        pointBackgroundColor: '#3b82f6', borderWidth: 2
+                    }]
+                },
+                options: chartOpts
+            });
+
+            new Chart(document.getElementById('conversionsChart'), {
+                type: 'line',
+                data: {
+                    labels: DemoApp.generateDateLabels(30),
+                    datasets: [{
+                        data: DemoApp.generateRandomSeries(30, 3, 15),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                        fill: true, tension: 0.35, pointRadius: 3,
+                        pointBackgroundColor: '#10b981', borderWidth: 2
+                    }]
+                },
+                options: chartOpts
+            });
+
+            DemoApp.populateConversionTable('conversionTableBody');
+            DemoApp.populateClickTable('clickTableBody');
+        });
+    </script>
+</body>
+</html>

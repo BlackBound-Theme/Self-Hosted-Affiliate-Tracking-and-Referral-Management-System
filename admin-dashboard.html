@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — AffiliateTracker Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="admin-shell">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <aside class="sidebar" id="adminSidebar">
+            <a href="index.html" class="sidebar__brand">
+                <img src="assets/img/logo.png" alt="Logo" style="height: 32px; width: 32px; border-radius: 5px;">Admin Panel
+            </a>
+            <nav class="sidebar__nav">
+                <div class="sidebar__section-label">Overview</div>
+                <a href="admin-dashboard.html" class="sidebar__link sidebar__link--active">
+                    <svg class="sidebar__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    Dashboard
+                </a>
+                <div class="sidebar__section-label">Management</div>
+                <a href="admin-affiliates.html" class="sidebar__link">
+                    <svg class="sidebar__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Affiliates
+                </a>
+                <a href="admin-payouts.html" class="sidebar__link">
+                    <svg class="sidebar__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    Payouts
+                </a>
+            </nav>
+            <div class="sidebar__footer">
+                <a href="admin-login.html" class="btn btn--secondary" style="width:100%;">Logout</a>
+            </div>
+        </aside>
+
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <div class="admin-topbar__left">
+                    <button class="admin-topbar__hamburger" id="sidebarToggle">☰</button>
+                    <span class="admin-topbar__breadcrumb">Dashboard</span>
+                </div>
+                <div class="admin-topbar__actions">
+                    <span style="font-size:13px;color:var(--text-secondary);">Super Admin</span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <div class="page-header animate-in">
+                    <h1 class="page-header__title">Platform Overview</h1>
+                    <p class="page-header__subtitle">Real-time metrics across all affiliates and conversions.</p>
+                </div>
+
+                <div class="stat-grid animate-in">
+                    <div class="stat-card"><div class="stat-card__label">Total Affiliates</div><div class="stat-card__value">156</div><div class="stat-card__trend stat-card__trend--up">128 active</div></div>
+                    <div class="stat-card"><div class="stat-card__label">Total Clicks</div><div class="stat-card__value">24,893</div><div class="stat-card__trend stat-card__trend--up">842 today</div></div>
+                    <div class="stat-card"><div class="stat-card__label">Conversions</div><div class="stat-card__value">1,247</div><div class="stat-card__trend stat-card__trend--up">18 pending</div></div>
+                    <div class="stat-card"><div class="stat-card__label">Total Revenue</div><div class="stat-card__value">$89,420</div></div>
+                    <div class="stat-card"><div class="stat-card__label">Commission Owed</div><div class="stat-card__value" style="color:var(--accent-amber);">$17,884</div></div>
+                    <div class="stat-card"><div class="stat-card__label">Payouts Completed</div><div class="stat-card__value" style="color:var(--accent-green);">$62,300</div><div class="stat-card__trend stat-card__trend--down">$12,500 pending</div></div>
+                    <div class="stat-card"><div class="stat-card__label">Fraud Blocks Today</div><div class="stat-card__value" style="color:var(--accent-red);">23</div></div>
+                </div>
+
+                <div class="panel animate-in">
+                    <div class="panel__header"><h2 class="panel__title">Revenue & Commission Trend (30 Days)</h2></div>
+                    <div class="panel__body"><div class="chart-container"><canvas id="revenueTrendChart"></canvas></div></div>
+                </div>
+
+                <div class="grid-2 animate-in">
+                    <div class="panel">
+                        <div class="panel__header"><h2 class="panel__title">Top Affiliates</h2></div>
+                        <table class="data-table">
+                            <thead><tr><th>Name</th><th>Tier</th><th>Earned</th><th>Balance</th></tr></thead>
+                            <tbody id="topAffiliatesBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="panel">
+                        <div class="panel__header"><h2 class="panel__title">Recent Conversions</h2></div>
+                        <table class="data-table">
+                            <thead><tr><th>Affiliate</th><th>Revenue</th><th>Commission</th><th>Status</th></tr></thead>
+                            <tbody id="recentConversionsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/demo.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sidebar toggle
+            var toggle = document.getElementById('sidebarToggle');
+            var sidebar = document.getElementById('adminSidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (toggle) {
+                toggle.addEventListener('click', function () { sidebar.classList.toggle('sidebar--open'); overlay.classList.toggle('active'); });
+                overlay.addEventListener('click', function () { sidebar.classList.remove('sidebar--open'); overlay.classList.remove('active'); });
+            }
+
+            // Revenue chart
+            var labels = DemoApp.generateDateLabels(30);
+            var revenues = DemoApp.generateRandomSeries(30, 1500, 5000);
+            var commissions = revenues.map(function (r) { return Math.round(r * 0.2); });
+
+            new Chart(document.getElementById('revenueTrendChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Revenue', data: revenues, backgroundColor: 'rgba(59, 130, 246, 0.6)', borderRadius: 4, borderSkipped: false },
+                        { label: 'Commission', data: commissions, backgroundColor: 'rgba(16, 185, 129, 0.6)', borderRadius: 4, borderSkipped: false }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#9595a8', font: { size: 12 } } },
+                        tooltip: { backgroundColor: '#1a1a25', borderColor: '#2a2a3a', borderWidth: 1, titleColor: '#f0f0f5', bodyColor: '#9595a8', cornerRadius: 8, padding: 12, callbacks: { label: function(ctx) { return ctx.dataset.label + ': $' + ctx.parsed.y.toLocaleString(); } } }
+                    },
+                    scales: {
+                        x: { grid: { color: 'rgba(42,42,58,0.4)', drawBorder: false }, ticks: { color: '#65657a', font: { size: 10 } } },
+                        y: { grid: { color: 'rgba(42,42,58,0.4)', drawBorder: false }, ticks: { color: '#65657a', callback: function(v) { return '$' + v; } }, beginAtZero: true }
+                    }
+                }
+            });
+
+            // Top affiliates
+            var topBody = document.getElementById('topAffiliatesBody');
+            var sorted = DemoApp.affiliates.slice().sort(function(a,b) { return b.earned - a.earned; }).slice(0, 5);
+            sorted.forEach(function (a) {
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td><div style="font-weight:600;color:var(--text-primary);">' + a.name + '</div><div style="font-size:11px;color:var(--text-muted);">' + a.email + '</div></td>' +
+                    '<td><span class="badge badge--' + a.tier + '">' + a.tier.charAt(0).toUpperCase() + a.tier.slice(1) + '</span></td>' +
+                    '<td>$' + a.earned.toLocaleString(undefined, {minimumFractionDigits:2}) + '</td>' +
+                    '<td style="color:var(--accent-green);">$' + (a.earned - a.paid).toFixed(2) + '</td>';
+                topBody.appendChild(tr);
+            });
+
+            // Recent conversions
+            var convBody = document.getElementById('recentConversionsBody');
+            DemoApp.conversions.slice(0, 5).forEach(function (c) {
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + c.affiliate + '</td><td>$' + c.revenue.toFixed(2) + '</td><td style="color:var(--accent-green);">$' + c.commission.toFixed(2) + '</td><td><span class="badge badge--' + c.status + '">' + c.status.charAt(0).toUpperCase() + c.status.slice(1) + '</span></td>';
+                convBody.appendChild(tr);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AffiliateTracker — Self-Hosted Affiliate Tracking Platform</title>
+    <meta name="description" content="Premium self-hosted affiliate tracking and referral management system. Track clicks, manage commissions, and process payouts.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #06060a;
+            --bg-secondary: #0d0d14;
+            --bg-card: #12121c;
+            --border: #1e1e30;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --text-muted: #55556a;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.12);
+            --green: #10b981;
+            --purple: #8b5cf6;
+            --amber: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: var(--accent-glow);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 24px;
+        }
+
+        .hero__badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero__title {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 800;
+            line-height: 1.08;
+            letter-spacing: -0.03em;
+            margin-bottom: 20px;
+            max-width: 800px;
+        }
+
+        .hero__title-gradient {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero__subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 560px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        .hero__cta-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 200ms ease;
+        }
+
+        .btn--primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn--primary:hover {
+            background: #2563eb;
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn--ghost {
+            background: transparent;
+            color: var(--text-primary);
+            border-color: var(--border);
+        }
+
+        .btn--ghost:hover {
+            border-color: #3b3b55;
+            background: rgba(255,255,255,0.03);
+        }
+
+        /* Nav */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(16px);
+            background: rgba(6, 6, 10, 0.8);
+            border-bottom: 1px solid rgba(30, 30, 48, 0.5);
+        }
+
+        .nav__brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav__icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .nav__links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav__link {
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 150ms;
+        }
+
+        .nav__link:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
+
+        /* Features */
+        .section {
+            padding: 100px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section__label {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .section__title {
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+
+        .section__subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 48px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 300ms;
+        }
+
+        .feature-card:hover {
+            border-color: #2a2a44;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+        }
+
+        .feature-card:hover::before { opacity: 1; }
+
+        .feature-card__icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card__icon--blue { background: var(--accent-glow); color: var(--accent); }
+        .feature-card__icon--green { background: rgba(16, 185, 129, 0.12); color: var(--green); }
+        .feature-card__icon--purple { background: rgba(139, 92, 246, 0.12); color: var(--purple); }
+        .feature-card__icon--amber { background: rgba(245, 158, 11, 0.12); color: var(--amber); }
+
+        .feature-card__title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature-card__desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Stats */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            padding: 60px 40px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            margin: 0 24px;
+            text-align: center;
+        }
+
+        .stats-bar__value {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+
+        .stats-bar__label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Screenshot preview */
+        .preview-section {
+            padding: 80px 24px;
+            text-align: center;
+        }
+
+        .preview-frame {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+        .preview-frame__bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-frame__dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .preview-frame__dot--red { background: #ef4444; }
+        .preview-frame__dot--yellow { background: #f59e0b; }
+        .preview-frame__dot--green { background: #10b981; }
+
+        .preview-frame__content {
+            padding: 32px;
+            min-height: 400px;
+        }
+
+        .mini-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .mini-stat {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: left;
+        }
+
+        .mini-stat__label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .mini-stat__value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .mini-chart-placeholder {
+            height: 180px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-end;
+            padding: 16px;
+            gap: 6px;
+        }
+
+        .mini-chart-placeholder__bar {
+            flex: 1;
+            border-radius: 4px 4px 0 0;
+            background: linear-gradient(to top, rgba(59, 130, 246, 0.4), rgba(59, 130, 246, 0.8));
+            transition: height 600ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Pricing */
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            max-width: 1000px;
+        }
+
+        .tier-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px 24px;
+            text-align: center;
+            transition: all 300ms;
+        }
+
+        .tier-card:hover {
+            border-color: #2a2a44;
+            transform: translateY(-4px);
+        }
+
+        .tier-card__name {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .tier-card__rate {
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .tier-card__desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .tier--bronze .tier-card__name { color: #cd853f; }
+        .tier--bronze .tier-card__rate { color: #cd853f; }
+        .tier--silver .tier-card__name { color: #c0c0c0; }
+        .tier--silver .tier-card__rate { color: #c0c0c0; }
+        .tier--gold .tier-card__name { color: #ffd700; }
+        .tier--gold .tier-card__rate { color: #ffd700; }
+        .tier--platinum .tier-card__name { color: #e5e4e2; }
+        .tier--platinum .tier-card__rate { color: #e5e4e2; }
+        .tier--diamond .tier-card__name { color: #b9f2ff; }
+        .tier--diamond .tier-card__rate { color: #b9f2ff; }
+
+        /* Footer */
+        .footer {
+            padding: 40px 24px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-bar { grid-template-columns: 1fr 1fr; padding: 40px 24px; }
+            .mini-stat-grid { grid-template-columns: 1fr 1fr; }
+            .nav__links { display: none; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .tier-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-bar { grid-template-columns: 1fr; }
+            .tier-grid { grid-template-columns: 1fr; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .animate-on-scroll.visible {
+            animation: fadeUp 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="index.html" class="nav__brand">
+        <img src="assets/img/logo.png" alt="Logo" style="height: 32px; width: 32px; border-radius: 5px;">
+        AffiliateTracker
+    </a>
+    <div class="nav__links">
+        <a href="affiliate-dashboard.html" class="nav__link">Affiliate Portal</a>
+        <a href="admin-dashboard.html" class="nav__link">Admin Panel</a>
+        <a href="admin-affiliates.html" class="nav__link">Affiliates</a>
+        <a href="admin-payouts.html" class="nav__link">Payouts</a>
+    </div>
+</nav>
+
+<section class="hero">
+    <div>
+        <div class="hero__badge">
+            <span class="hero__badge-dot"></span>
+            Self-Hosted • Enterprise Ready
+        </div>
+        <h1 class="hero__title">
+            Track Referrals.<br>
+            <span class="hero__title-gradient">Maximize Revenue.</span>
+        </h1>
+        <p class="hero__subtitle">
+            A premium affiliate tracking platform you own and control. 5-tier commission engine, real-time click tracking, fraud prevention, and automated payouts — all self-hosted.
+        </p>
+        <div class="hero__cta-group">
+            <a href="admin-dashboard.html" class="btn btn--primary">View Admin Demo →</a>
+            <a href="affiliate-dashboard.html" class="btn btn--ghost">Affiliate Portal</a>
+        </div>
+    </div>
+</section>
+
+<div class="stats-bar animate-on-scroll">
+    <div>
+        <div class="stats-bar__value" data-count="24893">0</div>
+        <div class="stats-bar__label">Clicks Tracked</div>
+    </div>
+    <div>
+        <div class="stats-bar__value" data-count="1247">0</div>
+        <div class="stats-bar__label">Conversions</div>
+    </div>
+    <div>
+        <div class="stats-bar__value" data-count="89420">$0</div>
+        <div class="stats-bar__label">Revenue Generated</div>
+    </div>
+    <div>
+        <div class="stats-bar__value" data-count="156">0</div>
+        <div class="stats-bar__label">Active Affiliates</div>
+    </div>
+</div>
+
+<section class="section animate-on-scroll">
+    <div class="section__label">Platform Features</div>
+    <h2 class="section__title">Everything You Need to Scale</h2>
+    <p class="section__subtitle">Built for serious businesses that need full control over their affiliate program.</p>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-card__icon feature-card__icon--blue">📊</div>
+            <h3 class="feature-card__title">Real-Time Click Tracking</h3>
+            <p class="feature-card__desc">Lightweight JavaScript tracker drops a 30-day cookie and fires conversion data. Under 3KB — zero performance impact.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card__icon feature-card__icon--green">💰</div>
+            <h3 class="feature-card__title">5-Tier Commission Engine</h3>
+            <p class="feature-card__desc">Bronze through Diamond tiers with automatic promotion. Banker's-rounded calculations prevent floating-point drift.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card__icon feature-card__icon--purple">🔒</div>
+            <h3 class="feature-card__title">Click Fraud Prevention</h3>
+            <p class="feature-card__desc">IP rate limiting, browser fingerprint correlation, and automatic fraud logging. Bots get silently discarded.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card__icon feature-card__icon--amber">💳</div>
+            <h3 class="feature-card__title">Secure Payout System</h3>
+            <p class="feature-card__desc">Dual verification — affiliates confirm with a code, admins approve. PayPal, bank transfer, and crypto support built in.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card__icon feature-card__icon--blue">🔗</div>
+            <h3 class="feature-card__title">HMAC Webhook API</h3>
+            <p class="feature-card__desc">SHA-256 signed conversion webhooks. Integrate with Shopify, WooCommerce, or any custom checkout in minutes.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card__icon feature-card__icon--green">📱</div>
+            <h3 class="feature-card__title">Mobile-First Design</h3>
+            <p class="feature-card__desc">Fully responsive dark-mode interface. Affiliates can check stats on any device. No app download required.</p>
+        </div>
+    </div>
+</section>
+
+<div class="preview-section animate-on-scroll">
+    <div class="section__label" style="display:block;margin-bottom:12px;">Live Preview</div>
+    <h2 class="section__title" style="margin-bottom:40px;">Admin Dashboard in Action</h2>
+
+    <div class="preview-frame">
+        <div class="preview-frame__bar">
+            <span class="preview-frame__dot preview-frame__dot--red"></span>
+            <span class="preview-frame__dot preview-frame__dot--yellow"></span>
+            <span class="preview-frame__dot preview-frame__dot--green"></span>
+            <span style="margin-left:12px;font-size:12px;color:var(--text-muted);">admin.yourdomain.com/dashboard</span>
+        </div>
+        <div class="preview-frame__content">
+            <div class="mini-stat-grid">
+                <div class="mini-stat">
+                    <div class="mini-stat__label">Affiliates</div>
+                    <div class="mini-stat__value">156</div>
+                </div>
+                <div class="mini-stat">
+                    <div class="mini-stat__label">Clicks Today</div>
+                    <div class="mini-stat__value">842</div>
+                </div>
+                <div class="mini-stat">
+                    <div class="mini-stat__label">Revenue</div>
+                    <div class="mini-stat__value" style="color:var(--accent);">$89,420</div>
+                </div>
+                <div class="mini-stat">
+                    <div class="mini-stat__label">Fraud Blocks</div>
+                    <div class="mini-stat__value" style="color:#ef4444;">23</div>
+                </div>
+            </div>
+            <div class="mini-chart-placeholder" id="miniChart"></div>
+        </div>
+    </div>
+</div>
+
+<section class="section animate-on-scroll">
+    <div class="section__label">Commission Tiers</div>
+    <h2 class="section__title">Reward Top Performers</h2>
+    <p class="section__subtitle">Affiliates automatically advance through 5 tiers based on conversion volume.</p>
+
+    <div class="tier-grid">
+        <div class="tier-card tier--bronze">
+            <div class="tier-card__name">Bronze</div>
+            <div class="tier-card__rate">10%</div>
+            <div class="tier-card__desc">0–50 conversions</div>
+        </div>
+        <div class="tier-card tier--silver">
+            <div class="tier-card__name">Silver</div>
+            <div class="tier-card__rate">15%</div>
+            <div class="tier-card__desc">51–150 conversions</div>
+        </div>
+        <div class="tier-card tier--gold">
+            <div class="tier-card__name">Gold</div>
+            <div class="tier-card__rate">20%</div>
+            <div class="tier-card__desc">151–500 conversions</div>
+        </div>
+        <div class="tier-card tier--platinum">
+            <div class="tier-card__name">Platinum</div>
+            <div class="tier-card__rate">25%</div>
+            <div class="tier-card__desc">501–1000 conversions</div>
+        </div>
+        <div class="tier-card tier--diamond">
+            <div class="tier-card__name">Diamond</div>
+            <div class="tier-card__rate">30%</div>
+            <div class="tier-card__desc">1000+ conversions</div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <p>&copy; 2026 AffiliateTracker. Self-hosted affiliate tracking platform.</p>
+</footer>
+
+<script>
+(function () {
+    'use strict';
+
+    // Intersection Observer for scroll animations
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(function (el) {
+        observer.observe(el);
+    });
+
+    // Animated counter
+    function animateCounter(el, target, prefix) {
+        prefix = prefix || '';
+        var duration = 2000;
+        var start = performance.now();
+
+        function tick(now) {
+            var elapsed = now - start;
+            var progress = Math.min(elapsed / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            var current = Math.floor(target * eased);
+            el.textContent = prefix + current.toLocaleString();
+            if (progress < 1) requestAnimationFrame(tick);
+        }
+
+        requestAnimationFrame(tick);
+    }
+
+    var statsObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.querySelectorAll('[data-count]').forEach(function (el) {
+                    var target = parseInt(el.getAttribute('data-count'), 10);
+                    var prefix = el.textContent.indexOf('$') >= 0 ? '$' : '';
+                    animateCounter(el, target, prefix);
+                });
+                statsObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    var statsBar = document.querySelector('.stats-bar');
+    if (statsBar) statsObserver.observe(statsBar);
+
+    // Mini chart animation
+    var miniChart = document.getElementById('miniChart');
+    if (miniChart) {
+        var heights = [35, 52, 44, 68, 55, 72, 48, 80, 65, 90, 75, 85, 60, 95, 70, 88, 78, 92, 55, 82];
+        heights.forEach(function (h) {
+            var bar = document.createElement('div');
+            bar.className = 'mini-chart-placeholder__bar';
+            bar.style.height = '0%';
+            miniChart.appendChild(bar);
+            setTimeout(function () { bar.style.height = h + '%'; }, 300 + Math.random() * 600);
+        });
+    }
+})();
+</script>
+</body>
+</html>

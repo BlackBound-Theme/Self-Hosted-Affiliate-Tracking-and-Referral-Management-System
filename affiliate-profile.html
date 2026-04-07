@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile &amp; Payouts — AffiliateTracker Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="top-bar">
+            <a href="index.html" class="top-bar__brand">
+                <img src="assets/img/logo.png" alt="Logo" style="height: 32px; width: 32px; border-radius: 5px;">
+                AffiliateTracker
+            </a>
+            <nav class="top-bar__nav">
+                <a href="affiliate-dashboard.html" class="top-bar__link">Dashboard</a>
+                <a href="affiliate-profile.html" class="top-bar__link top-bar__link--active">Profile</a>
+            </nav>
+            <div class="top-bar__actions">
+                <div class="top-bar__user">
+                    <div class="top-bar__avatar">J</div>
+                    <span>Jane Cooper</span>
+                </div>
+                <a href="affiliate-login.html" class="btn btn--secondary btn--sm">Logout</a>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="page-header animate-in">
+                <h1 class="page-header__title">Profile & Payouts</h1>
+                <p class="page-header__subtitle">Manage your account, payout method, and request withdrawals.</p>
+            </div>
+
+            <div class="grid-2 animate-in">
+                <!-- Profile Info -->
+                <div class="panel">
+                    <div class="panel__header"><h2 class="panel__title">Profile Information</h2></div>
+                    <div class="panel__body">
+                        <form onsubmit="showDemoAlert('Profile updated successfully.');return false;">
+                            <div class="form-group">
+                                <label class="form-label" for="profileName">Full Name</label>
+                                <input type="text" id="profileName" class="form-input" value="Jane Cooper">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-input" value="jane@example.com" disabled style="opacity:0.6;">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Referral Code</label>
+                                <input type="text" class="form-input mono" value="JANE2024X" disabled style="opacity:0.6;">
+                            </div>
+                            <button type="submit" class="btn btn--primary">Update Profile</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Change Password -->
+                <div class="panel">
+                    <div class="panel__header"><h2 class="panel__title">Change Password</h2></div>
+                    <div class="panel__body">
+                        <form onsubmit="showDemoAlert('Password changed successfully.');return false;">
+                            <div class="form-group">
+                                <label class="form-label" for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" class="form-input" value="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" class="form-input">
+                            </div>
+                            <button type="submit" class="btn btn--primary">Change Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2 animate-in" style="margin-top:24px;">
+                <!-- Payout Method -->
+                <div class="panel">
+                    <div class="panel__header"><h2 class="panel__title">Payout Method</h2></div>
+                    <div class="panel__body">
+                        <form onsubmit="showDemoAlert('Payout method updated. Verification pending admin review.');return false;">
+                            <div class="form-group">
+                                <label class="form-label" for="payoutMethod">Method</label>
+                                <select id="payoutMethod" class="form-input form-select">
+                                    <option value="">Select method...</option>
+                                    <option value="paypal" selected>PayPal</option>
+                                    <option value="bank_transfer">Bank Transfer</option>
+                                    <option value="crypto">Cryptocurrency</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="payoutDetails">Payout Details</label>
+                                <input type="text" id="payoutDetails" class="form-input" value="jane@example.com" placeholder="PayPal email, bank IBAN, or wallet address">
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+                                <span class="form-label" style="margin:0;">Verified:</span>
+                                <span class="badge badge--approved">Verified</span>
+                            </div>
+                            <button type="submit" class="btn btn--primary">Update Payout Method</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Request Payout -->
+                <div class="panel">
+                    <div class="panel__header"><h2 class="panel__title">Request Payout</h2></div>
+                    <div class="panel__body">
+                        <div style="background:var(--bg-tertiary);border-radius:var(--radius-md);padding:16px;margin-bottom:20px;">
+                            <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Available Balance</div>
+                            <div style="font-size:32px;font-weight:700;color:var(--accent-green);">$4,230.50</div>
+                        </div>
+
+                        <form onsubmit="showDemoAlert('Payout request submitted. Verification code: A7X2B9 — Please confirm to proceed.');return false;">
+                            <div class="form-group">
+                                <label class="form-label" for="payoutAmount">Withdrawal Amount ($)</label>
+                                <input type="number" id="payoutAmount" class="form-input" step="0.01" min="1" value="500.00">
+                            </div>
+                            <button type="submit" class="btn btn--primary">Request Payout</button>
+                        </form>
+
+                        <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border-subtle);">
+                            <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Confirm Pending Payout</h3>
+                            <form onsubmit="showDemoAlert('Payout confirmed. Awaiting admin approval.');return false;" style="display:flex;gap:8px;align-items:end;">
+                                <div class="form-group" style="margin:0;flex:1;">
+                                    <label class="form-label">Verification Code for $2,000.00</label>
+                                    <input type="text" class="form-input" maxlength="6" value="A7X2B9" placeholder="Enter 6-char code">
+                                </div>
+                                <button type="submit" class="btn btn--success btn--sm" style="height:42px;">Confirm</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payout History -->
+            <div class="panel animate-in" style="margin-top:24px;">
+                <div class="panel__header"><h2 class="panel__title">Payout History</h2></div>
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Amount</th><th>Method</th><th>Status</th><th>Reference</th><th>Date</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight:600;">$2,000.00</td>
+                            <td>PayPal</td>
+                            <td><span class="badge badge--processing">Processing</span></td>
+                            <td class="mono">—</td>
+                            <td>Apr 05, 2026</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:600;">$3,500.00</td>
+                            <td>PayPal</td>
+                            <td><span class="badge badge--completed">Completed</span></td>
+                            <td class="mono">TXN-88412</td>
+                            <td>Mar 28, 2026</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:600;">$4,200.00</td>
+                            <td>PayPal</td>
+                            <td><span class="badge badge--completed">Completed</span></td>
+                            <td class="mono">TXN-87503</td>
+                            <td>Mar 15, 2026</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:600;">$2,800.00</td>
+                            <td>PayPal</td>
+                            <td><span class="badge badge--completed">Completed</span></td>
+                            <td class="mono">TXN-86211</td>
+                            <td>Mar 01, 2026</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:600;">$1,719.50</td>
+                            <td>PayPal</td>
+                            <td><span class="badge badge--completed">Completed</span></td>
+                            <td class="mono">TXN-85044</td>
+                            <td>Feb 18, 2026</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Demo alert toast -->
+    <div id="demoToast" style="position:fixed;bottom:-80px;left:50%;transform:translateX(-50%);background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.25);color:#10b981;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:500;z-index:9999;transition:bottom 300ms cubic-bezier(0.4,0,0.2,1);backdrop-filter:blur(12px);white-space:nowrap;"></div>
+
+    <script>
+        function showDemoAlert(message) {
+            var toast = document.getElementById('demoToast');
+            toast.textContent = message;
+            toast.style.bottom = '32px';
+            setTimeout(function () { toast.style.bottom = '-80px'; }, 3500);
+        }
+    </script>
+</body>
+</html>
