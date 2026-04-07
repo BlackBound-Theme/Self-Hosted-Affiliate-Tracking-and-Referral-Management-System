@@ -1,1 +1,1 @@
-# Self-Hosted-Affiliate-Tracking-and-Referral-Management-System
+"This is a demo. Buy the full version on Codester [https://www.codester.com/blackbound/]."
